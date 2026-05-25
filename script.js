@@ -1,4 +1,8 @@
 const paragraph = document.getElementById("message");
+const copyButton = document.getElementById("copyButton");
+const copyStatus = document.getElementById("copyStatus");
+
+let currentCode = "";
 
 function getCentralTimeString() {
     const parts = new Intl.DateTimeFormat("en-US", {
@@ -26,21 +30,35 @@ async function sha256(input) {
 
     const hashBuffer = await crypto.subtle.digest("SHA-256", data);
 
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-
-    const hashHex = hashArray
+    return Array.from(new Uint8Array(hashBuffer))
         .map(b => b.toString(16).padStart(2, "0"))
         .join("");
+}
 
-    return hashHex;
+async function copyToClipboard(text) {
+    try {
+        await navigator.clipboard.writeText(text);
+        copyStatus.textContent = "Copied!";
+    } catch (err) {
+        copyStatus.textContent = "Could not copy automatically. Tap the button or copy manually.";
+        console.error("Clipboard copy failed:", err);
+    }
 }
 
 async function main() {
     const timeString = getCentralTimeString();
-
     const hash = await sha256(timeString);
 
-    paragraph.textContent = `${timeString} ${hash}`;
+    currentCode = hash;
+    paragraph.textContent = currentCode;
+
+    // Attempt automatic copy.
+    // This may fail on mobile/desktop unless the browser allows it.
+    await copyToClipboard(currentCode);
 }
+
+copyButton.addEventListener("click", async () => {
+    await copyToClipboard(currentCode);
+});
 
 main();
