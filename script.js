@@ -35,4 +35,12 @@ async function sha256(input) {
     return hashHex;
 }
 
-paragraph.textContent = getCentralTimeString() + " " + (await sha256(getCentralTimeString()));
+async function main() {
+    const timeString = getCentralTimeString();
+
+    const hash = await sha256(timeString);
+
+    paragraph.textContent = `${timeString} ${hash}`;
+}
+
+main();
