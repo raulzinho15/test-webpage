@@ -51,10 +51,6 @@ async function main() {
 
     currentCode = hash;
     paragraph.textContent = currentCode;
-
-    // Attempt automatic copy.
-    // This may fail on mobile/desktop unless the browser allows it.
-    await copyToClipboard(currentCode);
 }
 
 copyButton.addEventListener("click", async () => {
